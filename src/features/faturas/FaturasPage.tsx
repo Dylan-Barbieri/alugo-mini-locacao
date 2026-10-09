@@ -1,10 +1,11 @@
 import { useMemo, useState } from 'react';
-import { CreditCard, Search } from 'lucide-react';
+import { CreditCard, Info, Search } from 'lucide-react';
 import { StateMessage } from '@/components/shared/StateMessage';
 import { Card } from '@/components/ui/Card';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { listFaturas, simulatePayment, type Fatura } from '@/services/adminData';
+import { cn } from '@/utils/cn';
 import {
   formatCurrency,
   formatDate,
@@ -18,6 +19,7 @@ export function FaturasPage() {
   const [status, setStatus] = useState('todas');
   const [selected, setSelected] = useState<Fatura | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [feedbackTone, setFeedbackTone] = useState<'success' | 'error' | 'info'>('info');
   const [isPaying, setIsPaying] = useState<string | null>(null);
 
   const faturas = useMemo(() => {
@@ -37,9 +39,14 @@ export function FaturasPage() {
     );
     if (!confirmed) return;
     setFeedback(null);
+    setFeedbackTone('info');
     setIsPaying(fatura.id);
     try {
       const result = await simulatePayment(fatura.id);
+      if (result.webhook?.error) {
+        throw new Error(paymentErrorMessage(result.webhook.error));
+      }
+      setFeedbackTone('success');
       setFeedback(
         result.webhook?.status === 'already_paid'
           ? 'Pagamento já havia sido processado.'
@@ -47,7 +54,12 @@ export function FaturasPage() {
       );
       await reload();
     } catch (payError) {
-      setFeedback(payError instanceof Error ? payError.message : 'Erro ao simular pagamento.');
+      setFeedbackTone('error');
+      setFeedback(
+        payError instanceof Error
+          ? paymentErrorMessage(payError.message)
+          : 'Erro ao simular pagamento.',
+      );
     } finally {
       setIsPaying(null);
     }
@@ -66,6 +78,20 @@ export function FaturasPage() {
 
   return (
     <div className="space-y-6">
+      <Card className="border-brand-100 bg-brand-50">
+        <div className="flex gap-3 text-sm text-brand-800">
+          <Info className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
+          <div>
+            <h2 className="font-bold">Pix simulado para demonstração</h2>
+            <p className="mt-1 text-brand-700">
+              Esta ação não movimenta dinheiro real. A simulação exige usuário administrador,
+              confirmação na tela e flag operacional habilitada no backend. A liquidação acontece
+              somente pela Edge Function segura e pela RPC financeira idempotente.
+            </p>
+          </div>
+        </div>
+      </Card>
+
       <Card>
         <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <h2 className="text-lg font-bold">Faturas e pagamentos</h2>
@@ -92,7 +118,17 @@ export function FaturasPage() {
           </div>
         </div>
         {feedback ? (
-          <p className="mb-4 rounded-2xl bg-brand-50 p-3 text-sm text-brand-700">{feedback}</p>
+          <p
+            className={cn(
+              'mb-4 rounded-2xl p-3 text-sm font-medium',
+              feedbackTone === 'success' && 'bg-emerald-50 text-emerald-700',
+              feedbackTone === 'error' && 'bg-red-50 text-red-700',
+              feedbackTone === 'info' && 'bg-brand-50 text-brand-700',
+            )}
+            role={feedbackTone === 'error' ? 'alert' : 'status'}
+          >
+            {feedback}
+          </p>
         ) : null}
         <div className="overflow-x-auto">
           <table className="min-w-full text-left text-sm">
@@ -147,6 +183,8 @@ export function FaturasPage() {
                         <button
                           className="font-semibold text-brand-700 hover:text-brand-800 disabled:opacity-50"
                           disabled={isPaying === fatura.id}
+                          aria-busy={isPaying === fatura.id}
+                          title="Simula a liquidação Pix sem movimentação financeira real"
                           onClick={() => void handleSimulate(fatura)}
                         >
                           <CreditCard className="mr-1 inline h-4 w-4" />
@@ -187,4 +225,20 @@ export function FaturasPage() {
       ) : null}
     </div>
   );
+}
+
+function paymentErrorMessage(error: string) {
+  const messages: Record<string, string> = {
+    simulation_disabled:
+      'A simulação Pix está desabilitada neste ambiente. Solicite a ativação temporária para demonstração.',
+    admin_required: 'Apenas administradores autorizados podem simular pagamentos.',
+    missing_authentication: 'Sessão ausente. Faça login novamente para simular pagamentos.',
+    invalid_session: 'Sessão inválida ou expirada. Faça login novamente.',
+    invoice_not_found: 'Fatura não encontrada.',
+    invalid_invoice_status: 'Esta fatura não pode ser liquidada no status atual.',
+    amount_mismatch: 'O valor informado não corresponde ao valor da fatura.',
+    internal_error: 'Erro interno ao processar a simulação. Tente novamente mais tarde.',
+  };
+
+  return messages[error] ?? error;
 }

@@ -139,6 +139,14 @@ export async function simulatePayment(faturaId: string) {
   const { data, error } = await client().functions.invoke('simulate-payment', {
     body: { fatura_id: faturaId },
   });
-  if (error) throw error;
+  if (error) {
+    const context = (error as { context?: { json?: () => Promise<unknown> } }).context;
+    const body = await context?.json?.().catch(() => null);
+    const backendError =
+      body && typeof body === 'object' && 'error' in body
+        ? String((body as { error: unknown }).error)
+        : error.message;
+    throw new Error(backendError);
+  }
   return data as { ok: boolean; webhook?: { status?: string; error?: string } };
 }

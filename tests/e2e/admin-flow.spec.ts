@@ -54,6 +54,7 @@ test('fluxo administrativo completo', async ({ page }) => {
   await expect(page.getByText('Parcela 2')).toBeVisible();
 
   await page.getByRole('link', { name: /financeiro/i }).click();
+  await expect(page.getByText(/pix simulado para demonstração/i)).toBeVisible();
   await page.getByPlaceholder('Pesquisar').fill(`Cliente E2E ${unique}`);
   const firstRow = page
     .getByRole('row')
@@ -66,6 +67,7 @@ test('fluxo administrativo completo', async ({ page }) => {
     page.getByText(/pagamento simulado processado|pagamento já havia sido processado/i),
   ).toBeVisible();
   await expect(page.getByText('paga').first()).toBeVisible();
+  await expect(firstRow.getByRole('button', { name: /simular pix/i })).toHaveCount(0);
 
   await page.getByRole('button', { name: /sair/i }).click();
   await expect(page).toHaveURL(/\/login$/);

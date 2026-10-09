@@ -202,7 +202,7 @@ Esses testes SQL usam transação com `ROLLBACK`.
 
 ## Funcionamento do Pix simulado
 
-O fluxo de pagamento é uma simulação técnica:
+O fluxo de pagamento é uma simulação técnica e não movimenta dinheiro real:
 
 1. `simulate-payment` valida JWT, usuário e admin.
 2. A função só prossegue se `ALUGO_ENABLE_PAYMENT_SIMULATION=true`.
@@ -210,7 +210,42 @@ O fluxo de pagamento é uma simulação técnica:
 4. `payment-webhook` valida o payload e chama `public.liquidar_fatura`.
 5. A RPC liquida a fatura de forma transacional e idempotente.
 
-Em produção, a simulação deve permanecer desabilitada, exceto em janelas controladas de homologação.
+Na interface, o botão **Simular Pix** aparece somente em faturas com status `aberta`. Ao clicar, o usuário administrador recebe uma confirmação, vê o estado de processamento e a lista de faturas é atualizada automaticamente após a resposta do backend. Faturas pagas não oferecem nova simulação.
+
+Requisitos de autenticação:
+
+- usuário autenticado no Supabase Auth;
+- usuário cadastrado em `public.app_admins`;
+- JWT válido enviado automaticamente pelo cliente Supabase;
+- `ALUGO_WEBHOOK_SECRET` configurado apenas no backend.
+
+Habilitar temporariamente para demonstração:
+
+```bash
+npx supabase secrets set --project-ref <project-ref> ALUGO_ENABLE_PAYMENT_SIMULATION=true
+```
+
+Desabilitar novamente:
+
+```bash
+npx supabase secrets set --project-ref <project-ref> ALUGO_ENABLE_PAYMENT_SIMULATION=false
+```
+
+Como demonstrar:
+
+1. Entrar na aplicação com usuário administrador.
+2. Acessar **Financeiro**.
+3. Escolher uma fatura `aberta`.
+4. Clicar em **Simular Pix** e confirmar a ação.
+5. Verificar a mensagem de sucesso e o novo status `paga`.
+6. Repetições do webhook retornam resultado idempotente (`already_paid`).
+
+Riscos e limitações:
+
+- manter a simulação habilitada permite que administradores liquidem faturas de teste pela interface;
+- a simulação deve ser usada apenas em ambiente/controlada de demonstração;
+- não há integração com provedor Pix real;
+- a flag operacional não deve ser removida nem contornada.
 
 ## Deploy
 
