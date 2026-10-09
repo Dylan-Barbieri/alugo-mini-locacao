@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 const projectRef = 'alugo-mini-locacao';
+const edgeRuntimeContainer = `supabase_edge_runtime_${projectRef}`;
 const webhookSecret = `e2e-secret-${Date.now()}`;
 
 function run(command, args, options = {}) {
@@ -67,6 +68,14 @@ function stopProcessTree(processToStop) {
   }
 }
 
+function stopEdgeRuntime() {
+  try {
+    run('docker', ['stop', edgeRuntimeContainer], { stdio: 'ignore' });
+  } catch {
+    // Container pode não estar em execução; functions serve recria com o env-file do teste.
+  }
+}
+
 async function main() {
   runShell('npx supabase db reset');
   const env = parseStatusEnv();
@@ -81,6 +90,8 @@ async function main() {
     envFile,
     `ALUGO_WEBHOOK_SECRET=${webhookSecret}\nALUGO_ENABLE_PAYMENT_SIMULATION=true\n`,
   );
+
+  stopEdgeRuntime();
 
   const serve = spawn(
     `npx supabase functions serve payment-webhook simulate-payment --no-verify-jwt --env-file "${envFile}"`,

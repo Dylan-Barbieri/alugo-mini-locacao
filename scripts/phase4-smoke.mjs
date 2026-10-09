@@ -5,6 +5,7 @@ import { join } from 'node:path';
 
 const projectRef = 'alugo-mini-locacao';
 const dbContainer = `supabase_db_${projectRef}`;
+const edgeRuntimeContainer = `supabase_edge_runtime_${projectRef}`;
 const webhookSecret = `phase4-secret-${Date.now()}`;
 
 function run(command, args, options = {}) {
@@ -57,6 +58,14 @@ function stopProcessTree(processToStop) {
   }
 }
 
+function stopEdgeRuntime() {
+  try {
+    run('docker', ['stop', edgeRuntimeContainer], { stdio: 'ignore' });
+  } catch {
+    // Container pode não estar em execução; functions serve recria com o env-file do teste.
+  }
+}
+
 async function main() {
   const env = statusEnv();
   const tmp = mkdtempSync(join(tmpdir(), 'alugo-phase4-'));
@@ -65,6 +74,8 @@ async function main() {
     envFile,
     `ALUGO_WEBHOOK_SECRET=${webhookSecret}\nALUGO_ENABLE_PAYMENT_SIMULATION=true\n`,
   );
+
+  stopEdgeRuntime();
 
   const serve = spawn(
     `npx supabase functions serve payment-webhook simulate-payment --no-verify-jwt --env-file "${envFile}"`,
@@ -83,6 +94,17 @@ async function main() {
     });
     const signupBody = await signup.json();
     if (!signup.ok) throw new Error(`signup failed: ${JSON.stringify(signupBody)}`);
+
+    const commonEmail = `common-${Date.now()}@example.com`;
+    const commonSignup = await fetch(`${env.API_URL}/auth/v1/signup`, {
+      method: 'POST',
+      headers: { apikey: env.ANON_KEY, 'content-type': 'application/json' },
+      body: JSON.stringify({ email: commonEmail, password }),
+    });
+    const commonBody = await commonSignup.json();
+    if (!commonSignup.ok) {
+      throw new Error(`common signup failed: ${JSON.stringify(commonBody)}`);
+    }
 
     run('docker', [
       'exec',
@@ -108,6 +130,22 @@ async function main() {
       '-c',
       "select id from public.faturas where status = 'aberta' limit 1",
     ]).trim();
+
+    const commonResponse = await fetch(`${env.API_URL}/functions/v1/simulate-payment`, {
+      method: 'POST',
+      headers: {
+        apikey: env.ANON_KEY,
+        authorization: `Bearer ${commonBody.access_token}`,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({ fatura_id: invoice }),
+    });
+    const commonResult = await commonResponse.json();
+    if (commonResponse.status !== 403 || commonResult.error !== 'admin_required') {
+      throw new Error(
+        `common user should be rejected: ${JSON.stringify({ status: commonResponse.status, body: commonResult })}`,
+      );
+    }
 
     const response = await fetch(`${env.API_URL}/functions/v1/simulate-payment`, {
       method: 'POST',

@@ -39,17 +39,11 @@ function dockerPsql(sql) {
   ]).trim();
 }
 
-function getRunningWebhookSecret() {
+function stopEdgeRuntime() {
   try {
-    const value = run('docker', [
-      'exec',
-      edgeRuntimeContainer,
-      'printenv',
-      'ALUGO_WEBHOOK_SECRET',
-    ]).trim();
-    return value || null;
+    run('docker', ['stop', edgeRuntimeContainer], { stdio: 'ignore' });
   } catch {
-    return null;
+    // Container pode não estar em execução; functions serve recria com o env-file do teste.
   }
 }
 
@@ -184,28 +178,23 @@ async function runTests() {
   const env = parseSupabaseStatusEnv();
   const tmp = mkdtempSync(join(tmpdir(), 'alugo-webhook-'));
   const envFile = join(tmp, 'edge.env');
-  const runningSecret = getRunningWebhookSecret();
-  let serve = null;
 
-  if (runningSecret) {
-    webhookSecret = runningSecret;
-  } else {
-    writeFileSync(
-      envFile,
-      [
-        `ALUGO_WEBHOOK_SECRET=${webhookSecret}`,
-        `SUPABASE_URL=${env.API_URL}`,
-        `SUPABASE_SERVICE_ROLE_KEY=${env.SERVICE_ROLE_KEY}`,
-      ].join('\n'),
-    );
+  stopEdgeRuntime();
+  writeFileSync(
+    envFile,
+    [
+      `ALUGO_WEBHOOK_SECRET=${webhookSecret}`,
+      `SUPABASE_URL=${env.API_URL}`,
+      `SUPABASE_SERVICE_ROLE_KEY=${env.SERVICE_ROLE_KEY}`,
+    ].join('\n'),
+  );
 
-    const serveCommand = `npx supabase functions serve payment-webhook --no-verify-jwt --env-file "${envFile}"`;
-    serve = spawn(serveCommand, {
-      stdio: ['ignore', 'pipe', 'pipe'],
-      env: { ...process.env },
-      shell: true,
-    });
-  }
+  const serveCommand = `npx supabase functions serve payment-webhook --no-verify-jwt --env-file "${envFile}"`;
+  const serve = spawn(serveCommand, {
+    stdio: ['ignore', 'pipe', 'pipe'],
+    env: { ...process.env },
+    shell: true,
+  });
 
   let stderr = '';
   serve?.stderr.on('data', (chunk) => {

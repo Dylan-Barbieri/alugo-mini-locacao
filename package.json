@@ -16,7 +16,8 @@
     "db:reset": "supabase db reset",
     "test:webhook": "node scripts/payment-webhook-integration.mjs",
     "test:phase4": "node scripts/phase4-smoke.mjs",
-    "test:e2e": "node scripts/e2e.mjs"
+    "test:e2e": "node scripts/e2e.mjs",
+    "test:simulation-disabled": "node scripts/simulation-disabled-smoke.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.3",
@@ -27,7 +28,6 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@playwright/test": "^1.57.0",
     "@playwright/test": "^1.64.0",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^26.6.4",
