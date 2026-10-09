@@ -94,14 +94,14 @@ export function ContratosPage() {
 
         <Card>
           <h2 className="flex items-center gap-2 text-lg font-bold">
-            <FilePlus2 className="h-5 w-5" />
+            <FilePlus2 className="h-5 w-5 text-brand-700" />
             Novo contrato
           </h2>
           <form className="mt-4 space-y-3" onSubmit={handleSubmit}>
             <label className="block text-sm font-semibold">
               Cliente
               <select
-                className="mt-1 w-full rounded-2xl border border-sand-100 px-4 py-3"
+                className="mt-1 w-full rounded-2xl border border-sand-100 px-4 py-3 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
                 value={form.cliente_id}
                 onChange={(e) => setForm({ ...form, cliente_id: e.target.value })}
                 required
@@ -117,7 +117,7 @@ export function ContratosPage() {
             <label className="block text-sm font-semibold">
               Motocicleta
               <select
-                className="mt-1 w-full rounded-2xl border border-sand-100 px-4 py-3"
+                className="mt-1 w-full rounded-2xl border border-sand-100 px-4 py-3 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
                 value={form.veiculo_id}
                 onChange={(e) => setForm({ ...form, veiculo_id: e.target.value })}
                 required
@@ -133,7 +133,7 @@ export function ContratosPage() {
             <label className="block text-sm font-semibold">
               Valor semanal
               <input
-                className="mt-1 w-full rounded-2xl border border-sand-100 px-4 py-3"
+                className="mt-1 w-full rounded-2xl border border-sand-100 px-4 py-3 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
                 value={form.valor_semanal}
                 onChange={(e) => setForm({ ...form, valor_semanal: e.target.value })}
                 required
@@ -142,7 +142,7 @@ export function ContratosPage() {
             <label className="block text-sm font-semibold">
               Quantidade de semanas
               <input
-                className="mt-1 w-full rounded-2xl border border-sand-100 px-4 py-3"
+                className="mt-1 w-full rounded-2xl border border-sand-100 px-4 py-3 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
                 type="number"
                 min="1"
                 value={form.quantidade_semanas}
@@ -153,7 +153,7 @@ export function ContratosPage() {
             <label className="block text-sm font-semibold">
               Data de início
               <input
-                className="mt-1 w-full rounded-2xl border border-sand-100 px-4 py-3"
+                className="mt-1 w-full rounded-2xl border border-sand-100 px-4 py-3 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
                 type="date"
                 value={form.data_inicio}
                 onChange={(e) => setForm({ ...form, data_inicio: e.target.value })}
@@ -163,7 +163,7 @@ export function ContratosPage() {
             <label className="block text-sm font-semibold">
               Status
               <select
-                className="mt-1 w-full rounded-2xl border border-sand-100 px-4 py-3"
+                className="mt-1 w-full rounded-2xl border border-sand-100 px-4 py-3 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
                 value={form.status}
                 onChange={(e) => setForm({ ...form, status: e.target.value })}
               >
@@ -177,7 +177,7 @@ export function ContratosPage() {
               <p className="rounded-2xl bg-brand-50 p-3 text-sm text-brand-700">{message}</p>
             ) : null}
             <button
-              className="w-full rounded-full bg-ink-900 px-5 py-3 text-sm font-bold text-white"
+              className="w-full rounded-full bg-brand-700 px-5 py-3 text-sm font-bold text-white transition hover:bg-brand-800"
               type="submit"
             >
               Criar contrato
@@ -191,7 +191,7 @@ export function ContratosPage() {
           <h2 className="text-lg font-bold">Parcelas geradas</h2>
           <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
             {generated.map((fatura) => (
-              <div key={fatura.id} className="rounded-2xl border border-sand-100 p-4">
+              <div key={fatura.id} className="rounded-2xl border border-brand-100 bg-brand-50 p-4">
                 <p className="text-sm text-ink-700">Parcela {fatura.numero_parcela}</p>
                 <strong>{formatCurrency(fatura.valor)}</strong>
                 <p className="text-sm">Vence em {formatDate(fatura.data_vencimento)}</p>

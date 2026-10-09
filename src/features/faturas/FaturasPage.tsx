@@ -71,16 +71,16 @@ export function FaturasPage() {
           <h2 className="text-lg font-bold">Faturas e pagamentos</h2>
           <div className="flex flex-col gap-2 sm:flex-row">
             <label className="flex items-center gap-2 rounded-2xl border border-sand-100 px-3 py-2 text-sm">
-              <Search className="h-4 w-4 text-ink-700" />
+              <Search className="h-4 w-4 text-brand-700" />
               <input
-                className="outline-none"
+                className="outline-none focus:text-brand-800"
                 placeholder="Pesquisar"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
             </label>
             <select
-              className="rounded-2xl border border-sand-100 px-3 py-2 text-sm"
+              className="rounded-2xl border border-sand-100 px-3 py-2 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
               value={status}
               onChange={(e) => setStatus(e.target.value)}
             >
@@ -145,7 +145,7 @@ export function FaturasPage() {
                       </button>
                       {eligible ? (
                         <button
-                          className="font-semibold text-ink-900 disabled:opacity-50"
+                          className="font-semibold text-brand-700 hover:text-brand-800 disabled:opacity-50"
                           disabled={isPaying === fatura.id}
                           onClick={() => void handleSimulate(fatura)}
                         >
@@ -177,7 +177,7 @@ export function FaturasPage() {
               <p className="text-sm text-ink-700">Pagamento: {formatDateTime(selected.pago_em)}</p>
             </div>
             <button
-              className="rounded-full border border-sand-100 px-4 py-2 text-sm font-semibold"
+              className="rounded-full border border-sand-100 px-4 py-2 text-sm font-semibold hover:border-brand-100 hover:bg-brand-50 hover:text-brand-800"
               onClick={() => setSelected(null)}
             >
               Fechar

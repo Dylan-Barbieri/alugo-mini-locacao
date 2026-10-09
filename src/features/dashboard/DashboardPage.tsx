@@ -60,7 +60,7 @@ export function DashboardPage() {
                   <p className="text-sm text-ink-700">{metric.label}</p>
                   <strong className="mt-2 block text-2xl">{metric.value}</strong>
                 </div>
-                <div className="rounded-2xl bg-brand-50 p-3 text-brand-700">
+                <div className="rounded-2xl bg-brand-50 p-3 text-brand-700 ring-1 ring-brand-100">
                   <Icon className="h-6 w-6" />
                 </div>
               </div>

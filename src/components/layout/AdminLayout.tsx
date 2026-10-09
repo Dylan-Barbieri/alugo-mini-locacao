@@ -18,7 +18,7 @@ export function AdminLayout() {
     <div className="min-h-screen bg-sand-50 text-ink-900">
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-40 w-72 border-r border-sand-100 bg-ink-900 px-5 py-6 text-white shadow-xl transition-transform duration-200 lg:translate-x-0',
+          'fixed inset-y-0 left-0 z-40 w-72 border-r border-brand-800 bg-brand-900 px-5 py-6 text-white shadow-xl transition-transform duration-200 lg:translate-x-0',
           isOpen ? 'translate-x-0' : '-translate-x-full',
         )}
       >
@@ -43,8 +43,8 @@ export function AdminLayout() {
                   cn(
                     'flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition',
                     isActive
-                      ? 'bg-brand-500 text-white shadow-lg shadow-brand-500/20'
-                      : 'text-white/70 hover:bg-white/10 hover:text-white',
+                      ? 'bg-brand-700 text-white shadow-lg shadow-brand-500/20'
+                      : 'text-white/75 hover:bg-white/10 hover:text-white',
                   )
                 }
               >
@@ -58,7 +58,7 @@ export function AdminLayout() {
 
       {isOpen ? (
         <button
-          className="fixed inset-0 z-30 bg-ink-900/50 lg:hidden"
+          className="fixed inset-0 z-30 bg-brand-900/50 lg:hidden"
           aria-label="Fechar menu"
           onClick={() => setIsOpen(false)}
         />
@@ -69,7 +69,7 @@ export function AdminLayout() {
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <button
-                className="rounded-xl border border-sand-100 p-2 text-ink-800 lg:hidden"
+                className="rounded-xl border border-sand-100 p-2 text-brand-700 hover:bg-brand-50 lg:hidden"
                 onClick={() => setIsOpen(true)}
                 aria-label="Abrir menu"
               >
@@ -87,7 +87,7 @@ export function AdminLayout() {
                 Ambiente demonstrativo
               </span>
               <button
-                className="inline-flex items-center gap-2 rounded-full border border-sand-100 px-3 py-2 text-xs font-semibold text-ink-700 hover:bg-sand-50"
+                className="inline-flex items-center gap-2 rounded-full border border-sand-100 px-3 py-2 text-xs font-semibold text-ink-700 hover:border-brand-100 hover:bg-brand-50 hover:text-brand-800"
                 onClick={() => void auth.signOut()}
                 type="button"
               >

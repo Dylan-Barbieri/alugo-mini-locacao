@@ -12,7 +12,7 @@ export function NotFoundPage() {
         />
         <div className="mt-6 text-center">
           <Link
-            className="rounded-full bg-ink-900 px-5 py-3 text-sm font-semibold text-white"
+            className="rounded-full bg-brand-700 px-5 py-3 text-sm font-semibold text-white hover:bg-brand-800"
             to="/"
           >
             Voltar ao Dashboard

@@ -57,9 +57,9 @@ export function ClientesPage() {
         <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <h2 className="text-lg font-bold">Clientes cadastrados</h2>
           <label className="flex items-center gap-2 rounded-2xl border border-sand-100 px-3 py-2 text-sm">
-            <Search className="h-4 w-4 text-ink-700" />
+            <Search className="h-4 w-4 text-brand-700" />
             <input
-              className="outline-none"
+              className="outline-none focus:text-brand-800"
               placeholder="Pesquisar por nome"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -101,7 +101,7 @@ export function ClientesPage() {
 
       <Card>
         <h2 className="flex items-center gap-2 text-lg font-bold">
-          <UserPlus className="h-5 w-5" />
+          <UserPlus className="h-5 w-5 text-brand-700" />
           {editing ? 'Editar cliente' : 'Novo cliente'}
         </h2>
         <form className="mt-4 space-y-3" onSubmit={handleSubmit}>
@@ -109,7 +109,7 @@ export function ClientesPage() {
             <label key={field} className="block text-sm font-semibold capitalize text-ink-800">
               {field}
               <input
-                className="mt-1 w-full rounded-2xl border border-sand-100 px-4 py-3 outline-none focus:border-brand-500"
+                className="mt-1 w-full rounded-2xl border border-sand-100 px-4 py-3 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
                 value={form[field]}
                 onChange={(e) => setForm({ ...form, [field]: e.target.value })}
                 required={field === 'nome' || field === 'documento'}
@@ -120,7 +120,7 @@ export function ClientesPage() {
             <p className="rounded-2xl bg-brand-50 p-3 text-sm text-brand-700">{message}</p>
           ) : null}
           <button
-            className="w-full rounded-full bg-ink-900 px-5 py-3 text-sm font-bold text-white"
+            className="w-full rounded-full bg-brand-700 px-5 py-3 text-sm font-bold text-white transition hover:bg-brand-800"
             type="submit"
           >
             Salvar cliente

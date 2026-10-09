@@ -70,9 +70,9 @@ export function VeiculosPage() {
         <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <h2 className="text-lg font-bold">Motocicletas</h2>
           <label className="flex items-center gap-2 rounded-2xl border border-sand-100 px-3 py-2 text-sm">
-            <Search className="h-4 w-4 text-ink-700" />
+            <Search className="h-4 w-4 text-brand-700" />
             <input
-              className="outline-none"
+              className="outline-none focus:text-brand-800"
               placeholder="Pesquisar"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -126,14 +126,14 @@ export function VeiculosPage() {
 
       <Card>
         <h2 className="flex items-center gap-2 text-lg font-bold">
-          <Bike className="h-5 w-5" />
+          <Bike className="h-5 w-5 text-brand-700" />
           {editing ? 'Editar veículo' : 'Novo veículo'}
         </h2>
         <form className="mt-4 space-y-3" onSubmit={handleSubmit}>
           <label className="block text-sm font-semibold">
             Marca
             <input
-              className="mt-1 w-full rounded-2xl border border-sand-100 px-4 py-3"
+              className="mt-1 w-full rounded-2xl border border-sand-100 px-4 py-3 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
               value={form.marca}
               onChange={(e) => setForm({ ...form, marca: e.target.value })}
               required
@@ -142,7 +142,7 @@ export function VeiculosPage() {
           <label className="block text-sm font-semibold">
             Modelo
             <input
-              className="mt-1 w-full rounded-2xl border border-sand-100 px-4 py-3"
+              className="mt-1 w-full rounded-2xl border border-sand-100 px-4 py-3 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
               value={form.modelo}
               onChange={(e) => setForm({ ...form, modelo: e.target.value })}
               required
@@ -151,7 +151,7 @@ export function VeiculosPage() {
           <label className="block text-sm font-semibold">
             Placa
             <input
-              className="mt-1 w-full rounded-2xl border border-sand-100 px-4 py-3 uppercase"
+              className="mt-1 w-full rounded-2xl border border-sand-100 px-4 py-3 uppercase outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
               value={form.placa}
               onChange={(e) => setForm({ ...form, placa: e.target.value })}
               required
@@ -160,7 +160,7 @@ export function VeiculosPage() {
           <label className="block text-sm font-semibold">
             Status
             <select
-              className="mt-1 w-full rounded-2xl border border-sand-100 px-4 py-3"
+              className="mt-1 w-full rounded-2xl border border-sand-100 px-4 py-3 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
               value={form.status}
               onChange={(e) => setForm({ ...form, status: e.target.value })}
             >
@@ -174,7 +174,7 @@ export function VeiculosPage() {
             <p className="rounded-2xl bg-brand-50 p-3 text-sm text-brand-700">{message}</p>
           ) : null}
           <button
-            className="w-full rounded-full bg-ink-900 px-5 py-3 text-sm font-bold text-white"
+            className="w-full rounded-full bg-brand-700 px-5 py-3 text-sm font-bold text-white transition hover:bg-brand-800"
             type="submit"
           >
             Salvar veículo

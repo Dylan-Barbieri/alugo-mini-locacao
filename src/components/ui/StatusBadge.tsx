@@ -6,7 +6,7 @@ type StatusBadgeProps = {
 };
 
 const toneClass = {
-  success: 'bg-brand-50 text-brand-700 ring-brand-100',
+  success: 'bg-emerald-50 text-emerald-700 ring-emerald-100',
   warning: 'bg-amber-50 text-amber-700 ring-amber-100',
   neutral: 'bg-slate-100 text-slate-700 ring-slate-200',
   danger: 'bg-red-50 text-red-700 ring-red-100',
